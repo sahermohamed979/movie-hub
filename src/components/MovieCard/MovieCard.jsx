@@ -59,7 +59,7 @@ export default function MovieCard({ movie }) {
           <div className="overlay-content text-center px-4">
             {/* Play Button */}
             <Link
-              to={`/movie/${id}`}
+              to={`/MovieDetails/${id}`}
               className="btn btn-play bg-linear-to-r from-blue-500 to-cyan-500 text-white rounded-full p-4 flex items-center justify-center hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 shadow-lg mx-auto mb-4 transform hover:scale-110"
               aria-label="Play movie"
             >
