@@ -14,7 +14,7 @@ import App from "./App.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Bounce, ToastContainer } from "react-toastify";
 
-const routes = createBrowserRouter([
+const routes  = createBrowserRouter([
   {
     path: "/",
     element: <App />,
@@ -27,9 +27,9 @@ const routes = createBrowserRouter([
         path: "/SignUp",
         element: <SignUp />,
       },
-      { path: "/Popular", element: <Popular /> },
-      { path: "/TopRated", element: <TopRated /> },
-      { path: "/Upcoming", element: <Upcoming /> },
+      { path: "/popular", element: <Popular /> },
+      { path: "/topRated", element: <TopRated /> },
+      { path: "/upcoming", element: <Upcoming /> },
     ],
   },
 ]);

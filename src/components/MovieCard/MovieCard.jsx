@@ -71,7 +71,7 @@ export default function MovieCard({ movie }) {
               {/* Action Buttons */}
               <div className="overlay-actions flex gap-3 justify-center">
                 <Link
-                  to={`/MovieDetails/${id}`}
+                  to={`/movieDetails/${id}`}
                   className="btn btn-action bg-gray-800/80 border border-gray-600 text-white rounded-full p-2.5 flex md:hidden items-center justify-center hover:bg-green-500 hover:border-green-500 transition-all duration-300"
                   aria-label="Play movie"
                 >
@@ -85,14 +85,14 @@ export default function MovieCard({ movie }) {
                   <Heart size={18} />
                 </Link>
                 <Link
-                  to={`/notfound/${id}`}
+                  to={`/notFound/${id}`}
                   className="btn btn-action bg-gray-800/80 border border-gray-600 text-white rounded-full p-2.5 flex items-center justify-center hover:bg-blue-500 hover:border-blue-500 transition-all duration-300"
                   aria-label="Add to watchlist"
                 >
                   <Bookmark size={18} />
                 </Link>
                 <Link
-                  to={`/MovieDetails/${id}`}
+                  to={`/movieDetails/${id}`}
                   className="btn btn-action bg-gray-800/80 border border-gray-600 text-white rounded-full p-2.5 flex items-center justify-center hover:bg-cyan-500 hover:border-cyan-500 transition-all duration-300"
                   aria-label="More info"
                 >

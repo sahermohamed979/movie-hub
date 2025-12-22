@@ -1,5 +1,3 @@
-import Footer from "../../components/Footer/Footer";
-import Nav from "../../components/NavBar/Nav";
 import MovieCard from "../../components/MovieCard/MovieCard";
 import Loading from "../../components/Loading/Loading";
 import { useState, useEffect } from "react";
