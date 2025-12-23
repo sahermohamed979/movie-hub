@@ -1,63 +1,16 @@
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import {
+  faUser,
+  faEnvelope,
+  faPhone,
+  faLock,
+} from "@fortawesome/free-solid-svg-icons";
+import FormField from "../ui/FormField/FormField";
+
+import useSingUpHook from "../hooks/SingUpHook";
+import { Link } from "react-router-dom";
 
 export default function SignupForm() {
-  const navigate = useNavigate();
-  const regexPassword =
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
-  const phoneRegExp = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
-  const signupSchema = Yup.object({
-    name: Yup.string()
-      .min(3, "Name must be at least 3 characters")
-      .max(30, "Name must be at most 30 characters")
-      .required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    phone: Yup.string()
-      .required("Phone is required")
-      .matches(phoneRegExp, "Phone number is not valid"),
-    password: Yup.string()
-      .required("Password is required")
-      .matches(regexPassword, "Password is not matched"),
-    rePassword: Yup.string()
-      .required("Confirm Password is required")
-      .oneOf([Yup.ref("password")], "Passwords must match"),
-  });
-  async function handelSmite(values) {
-    const respond = await fetch(
-      `https://ecommerce.routemisr.com/api/v1/auth/signup`,
-      {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await respond.json();
-    if (data.message === "success") {
-      toast.success("Signup successful! Please log in.");
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
-    }
-    // navigate("/login");
-  }
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      rePassword: "",
-    },
-    validationSchema: signupSchema,
-    onSubmit: handelSmite,
-  });
-
+  const { formik, existErrorMsg, setExistErrorMsg } = useSingUpHook();
   return (
     <div className="bg-linear-to-br from-gray-900 via-blue-900 to-gray-900 py-5 min-h-screen">
       <div className="container mx-auto px-4 pt-5">
@@ -67,7 +20,7 @@ export default function SignupForm() {
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-linear-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white text-2xl">👤</span>
+                  <i className="fa-solid fa-user text-white text-2xl"></i>
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">
                   Create Account
@@ -80,142 +33,85 @@ export default function SignupForm() {
               {/* Form */}
               <form onSubmit={formik.handleSubmit}>
                 {/* Name Input */}
-                <div className="relative mb-4">
-                  <input
-                    type="text"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="nameInput"
-                    name="name"
-                    placeholder="Enter your name"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label
-                    htmlFor="nameInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    👤 Full Name
-                  </label>
-                  {formik.errors.name && formik.touched.name ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.name}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                <FormField
+                  type="text"
+                  labelText="Full Name"
+                  id="nameInput"
+                  name="name"
+                  placeholder="Enter your name"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.name}
+                  touched={formik.touched.name}
+                  icon={faUser}
+                />
                 {/* Email Input */}
-                <div className="relative mb-4">
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="emailInput"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label
-                    htmlFor="emailInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    ✉️ Email Address
-                  </label>
-                  {formik.errors.email && formik.touched.email ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.email}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                <FormField
+                  type="email"
+                  labelText="Email Address"
+                  id="emailInput"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formik.values.email}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    setExistErrorMsg(null);
+                  }}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.email}
+                  touched={formik.touched.email}
+                  icon={faEnvelope}
+                  isExistingError={existErrorMsg}
+                />
+
                 {/* Phone Input */}
-                <div className="relative mb-4">
-                  <input
-                    type="tel"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="phoneInput"
-                    name="phone"
-                    placeholder="Enter your phone"
-                    value={formik.values.phone}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label
-                    htmlFor="phoneInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    📞 Phone Number
-                  </label>
-                  {formik.errors.phone && formik.touched.phone ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.phone}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                <FormField
+                  type="text"
+                  labelText="Phone Number"
+                  id="phoneInput"
+                  name="phone"
+                  placeholder="Enter your phone"
+                  value={formik.values.phone}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.phone}
+                  touched={formik.touched.phone}
+                  icon={faPhone}
+                />
                 {/* Password Input */}
-                <div className="relative mb-4">
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="passwordInput"
-                    name="password"
-                    placeholder="Enter your password"
-                    value={formik.values.password}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label
-                    htmlFor="passwordInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    🔒 Password
-                  </label>
-                  {formik.errors.password && formik.touched.password ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.password}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                <FormField
+                  type="password"
+                  labelText="Password"
+                  id="passwordInput"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.password}
+                  touched={formik.touched.password}
+                  icon={faLock}
+                />
                 {/* Confirm Password Input */}
-                <div className="relative mb-6">
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="confirmPasswordInput"
-                    name="rePassword"
-                    placeholder="Confirm your password"
-                    value={formik.values.rePassword}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label
-                    htmlFor="confirmPasswordInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    🔐 Confirm Password
-                  </label>
-                  {formik.errors.rePassword && formik.touched.rePassword ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.rePassword}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                <FormField
+                  type="password"
+                  labelText="Confirm Password"
+                  id="rePasswordInput"
+                  name="rePassword"
+                  placeholder="Re-enter your password"
+                  value={formik.values.rePassword}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.rePassword}
+                  touched={formik.touched.rePassword}
+                  icon={faLock}
+                />
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={
-                    !(formik.isValid && formik.dirty) || formik.isSubmitting
-                  }
-                  className="w-full py-3  bg-gradient-to-r from-blue-500 to-cyan-500 disabled:from-red-500/50 disabled:to-red-500/50 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
+                  disabled={!(formik.isValid && formik.dirty) || existErrorMsg}
+                  className="w-full py-3  bg-gradient-to-r from-blue-500 to-cyan-500 disabled:from-cyan-500/30 disabled:to-blue-500/30 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
                 >
                   {formik.isSubmitting ? "Signing Up..." : "Sign Up"}
                 </button>
@@ -278,12 +174,12 @@ export default function SignupForm() {
                 {/* Login Link */}
                 <p className="text-center mt-6 text-gray-400">
                   Already have an account?{" "}
-                  <a
-                    href="#"
+                  <Link
+                    to="/login"
                     className="text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     Login here
-                  </a>
+                  </Link>
                 </p>
               </form>
             </div>

@@ -11,6 +11,7 @@ import TopRated from "./pages/TopRated/TopRated.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Upcoming from "./pages/Upcoming/upcoming.jsx";
 import App from "./App.jsx";
+// cspell:ignore fortawesome fontawesome
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Bounce, ToastContainer } from "react-toastify";
 

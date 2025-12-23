@@ -1,43 +1,10 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
+import useLoginHook from "../hooks/LoginHook";
+import FormField from "../ui/FormField/FormField";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const navigate = useNavigate();
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    const values = {
-      email,
-      password,
-    };
-
-    const response = await fetch(
-      `https://ecommerce.routemisr.com/api/v1/auth/signin`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      }
-    );
-
-    const data = await response.json();
-    if (data.message === "success") {
-      toast.success("Welcome back!");
-      localStorage.setItem("token", data.token);
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    } else {
-      toast.error(data.message || "Login failed");
-    }
-  }
+  const { formik, existErrorMsg, setExistErrorMsg } = useLoginHook();
 
   return (
     <div className="bg-linear-to-br from-gray-900 via-blue-900 to-gray-900 py-5 min-h-screen">
@@ -57,42 +24,42 @@ export default function LoginForm() {
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={formik.handleSubmit}>
                 {/* Email Input */}
-                <div className="relative mb-4">
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="emailInput"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <label
-                    htmlFor="emailInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    ✉️ Email Address
-                  </label>
-                </div>
-
+                <FormField
+                  type="email"
+                  labelText="Email Address"
+                  id="emailInput"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formik.values.email}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    setExistErrorMsg(null);
+                  }}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.email}
+                  touched={formik.touched.email}
+                  icon={faEnvelope}
+                />
                 {/* Password Input */}
-                <div className="relative mb-4">
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 peer"
-                    id="passwordInput"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <label
-                    htmlFor="passwordInput"
-                    className="absolute left-4 -top-2.5 bg-gray-800 px-1 text-sm text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-blue-400"
-                  >
-                    🔒 Password
-                  </label>
-                </div>
+                <FormField
+                  type="password"
+                  labelText="Password"
+                  id="passwordInput"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formik.values.password}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    setExistErrorMsg(null);
+                  }}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.password}
+                  touched={formik.touched.password}
+                  icon={faLock}
+                />
+                <p className="text-red-500 text-sm mt-1">{existErrorMsg}</p>
 
                 {/* Forgot Password Link */}
                 <div className="flex justify-end mb-6">
@@ -103,15 +70,14 @@ export default function LoginForm() {
                     Forgot Password?
                   </a>
                 </div>
-
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-3 bg-linear-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
+                  disabled={!(formik.isValid && formik.dirty)}
+                  className="w-full py-3 bg-linear-to-r disabled:from-blue-500/30 disabled:to-cyan-500/30 from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
                 >
                   🚀 Sign In
                 </button>
-
                 {/* Divider */}
                 <div className="flex items-center my-6">
                   <div className="flex-1 border-t border-gray-600"></div>
@@ -120,7 +86,6 @@ export default function LoginForm() {
                   </span>
                   <div className="flex-1 border-t border-gray-600"></div>
                 </div>
-
                 {/* Social Login */}
                 <div className="flex justify-center gap-4">
                   <button
@@ -169,16 +134,15 @@ export default function LoginForm() {
                     </svg>
                   </button>
                 </div>
-
                 {/* Signup Link */}
                 <p className="text-center mt-6 text-gray-400">
                   Don't have an account?{" "}
-                  <a
-                    href="#"
+                  <Link
+                    to="/signup"
                     className="text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     Sign up here
-                  </a>
+                  </Link>
                 </p>
               </form>
             </div>
